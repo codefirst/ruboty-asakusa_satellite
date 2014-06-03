@@ -1,11 +1,14 @@
 # Ruboty::AsakusaSatellite
 AsakusaSatellite adapter for [Ruboty](https://github.com/r7kamura/ruboty).
+Now only supports Keima adapter.
 
 ## Usage
 TODO
 
 ```ruby
 # Gemfile
+gem 'websocket-client-simple', github: 'mallowlabs/websocket-client-simple', branch: 'ssl'
+gem 'socket.io-client-simple', github: 'mallowlabs/ruby-socket.io-client-simple', branch: 'query-parameter'
 gem "ruboty-asakusa-satellite", github: 'codefirst/ruboty-asakusa-satellite'
 ```
 

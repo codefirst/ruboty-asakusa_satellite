@@ -13,6 +13,7 @@ module Ruboty
       def run
         connect
         Signal.trap("INT") { exit 1 }
+        sleep
       end
 
       def say(message)
