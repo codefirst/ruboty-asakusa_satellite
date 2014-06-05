@@ -22,7 +22,11 @@ module Ruboty
         https.use_ssl = uri.scheme == 'https'
         https.verify_mode = OpenSSL::SSL::VERIFY_NONE
         https.start do |conn|
-          conn.post(uri.path + "/message", "room_id=#{room}&api_key=#{api_key}&message=#{message[:body]}")
+          conn.post(uri.path + "/message", URI.encode_www_form({
+            room_id: room,
+            api_key: api_key,
+            message: message[:body]
+          }))
         end
       end
 
