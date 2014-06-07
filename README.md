@@ -1,9 +1,6 @@
 # Ruboty::AsakusaSatellite
 AsakusaSatellite adapter for [Ruboty](https://github.com/r7kamura/ruboty).
-Now only supports Keima adapter.
-
-## Usage
-TODO
+Now only supports [Keima](http://www.codefirst.org/keima/) adapter.
 
 ```ruby
 # Gemfile
