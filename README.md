@@ -4,8 +4,6 @@ Now only supports [Keima](http://www.codefirst.org/keima/) adapter.
 
 ```ruby
 # Gemfile
-gem 'websocket-client-simple', github: 'mallowlabs/websocket-client-simple', branch: 'ssl'
-gem 'socket.io-client-simple', github: 'mallowlabs/ruby-socket.io-client-simple', branch: 'query-parameter'
 gem "ruboty-asakusa-satellite", github: 'codefirst/ruboty-asakusa-satellite'
 ```
 
