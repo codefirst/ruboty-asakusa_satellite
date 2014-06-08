@@ -36,7 +36,7 @@ module Ruboty
         info = JSON.parse(open("#{url}/api/v1/service/info.json").read)
         url = info["message_pusher"]["param"]["url"]
         key = info["message_pusher"]["param"]["key"]
-        @client ||= SocketIO::Client::Simple::Client.new("#{url}/?app=#{key}")
+        @client ||= SocketIO::Client::Simple::Client.new(url, app: key)
       end
 
       def room
