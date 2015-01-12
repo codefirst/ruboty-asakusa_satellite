@@ -4,7 +4,7 @@ Now only supports [Keima](http://www.codefirst.org/keima/) adapter.
 
 ```ruby
 # Gemfile
-gem "ruboty-asakusa-satellite", github: 'codefirst/ruboty-asakusa-satellite'
+gem "ruboty-asakusa_satellite", github: 'codefirst/ruboty-asakusa_satellite'
 ```
 
 ## ENV
