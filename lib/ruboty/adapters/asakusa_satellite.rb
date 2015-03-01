@@ -1,5 +1,4 @@
-require 'json'
-require 'open-uri'
+require 'httparty'
 require 'socket.io-client-simple'
 
 module Ruboty
@@ -7,7 +6,6 @@ module Ruboty
     class AsakusaSatellite < Base
       env :ASAKUSA_SATELLITE_URL, "AsakusaSatellite URL (e.g. http://asakusa-satellite.org)"
       env :ASAKUSA_SATELLITE_ROOM, "Room name to join in at first (e.g. general)"
-      env :ASAKUSA_SATELLITE_USERNAME, "Account's username (e.g. alice)"
       env :ASAKUSA_SATELLITE_API_KEY, "Account's API Key"
 
       def run
@@ -17,23 +15,37 @@ module Ruboty
       end
 
       def say(message)
-        uri = URI.parse("#{url}/api/v1")
-        https = Net::HTTP.new(uri.host, uri.port)
-        https.use_ssl = uri.scheme == 'https'
-        https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        https.start do |conn|
-          conn.post(uri.path + "/message", URI.encode_www_form({
-            room_id: room,
-            api_key: api_key,
-            message: message[:body]
-          }))
+        HTTParty.post("#{url}/api/v1/message", body: {
+          room_id: room,
+          api_key: api_key,
+          message: message[:body]
+        })
+      end
+
+      def on_message(room_id, robot, json)
+        message = JSON.parse(json)["content"]
+        if (not message.nil?) and (not message["room"].nil?)
+          if room_id == message["room"]["id"]
+            body = message["body"]
+            unless body.nil?
+              body.match(/^@([A-Za-z0-9_]+)/)
+              message_to = $1
+              robot.receive(
+                body: body,
+                from: message["screen_name"],
+                from_name: message["name"],
+                to: message_to,
+                type: "groupchat"
+              )
+            end
+          end
         end
       end
 
       private
 
       def client
-        info = JSON.parse(open("#{url}/api/v1/service/info.json").read)
+        info = HTTParty.get("#{url}/api/v1/service/info.json")
         url = info["message_pusher"]["param"]["url"]
         key = info["message_pusher"]["param"]["key"]
         @client ||= SocketIO::Client::Simple::Client.new(url, app: key)
@@ -41,10 +53,6 @@ module Ruboty
 
       def room
         ENV["ASAKUSA_SATELLITE_ROOM"]
-      end
-
-      def username
-        ENV["ASAKUSA_SATELLITE_USERNAME"]
       end
 
       def api_key
@@ -70,27 +78,6 @@ module Ruboty
 
         client.connect
       end
-
-      def on_message(room_id, robot, json)
-        message = JSON.parse(json)["content"]
-        if (not message.nil?) and (not message["room"].nil?)
-          if room_id == message["room"]["id"]
-            body = message["body"]
-            unless body.nil?
-              body.match(/^@([A-Za-z0-9_]+)/)
-              message_to = $1
-              robot.receive(
-                body: body,
-                from: message["screen_name"],
-                from_name: message["name"],
-                to: message_to,
-                type: "groupchat"
-              )
-            end
-          end
-        end
-      end
-
     end
   end
 end
