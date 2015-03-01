@@ -58,33 +58,37 @@ module Ruboty
       def connect
         room_id = room
         robo = robot
+        this = self
 
         client.on :connect do
           self.emit :subscribe, "as-#{room_id}"
         end
 
         client.on :message_create do |channel, json|
-          message = JSON.parse(json)["content"]
-          if (not message.nil?) and (not message["room"].nil?)
-            if room_id == message["room"]["id"]
-              body = message["body"]
-              unless body.nil?
-                body.match(/^@([A-Za-z0-9_]+)/)
-                message_to = $1
-                if message_to
-                  robo.receive(
-                    body: body,
-                    from: message["screen_name"],
-                    from_name: message["name"],
-                    to: message_to,
-                    type: "groupchat"
-                  )
-                end
-              end
+          this.on_message(room_id, robo, json)
+        end
+
+        client.connect
+      end
+
+      def on_message(room_id, robot, json)
+        message = JSON.parse(json)["content"]
+        if (not message.nil?) and (not message["room"].nil?)
+          if room_id == message["room"]["id"]
+            body = message["body"]
+            unless body.nil?
+              body.match(/^@([A-Za-z0-9_]+)/)
+              message_to = $1
+              robot.receive(
+                body: body,
+                from: message["screen_name"],
+                from_name: message["name"],
+                to: message_to,
+                type: "groupchat"
+              )
             end
           end
         end
-        client.connect
       end
 
     end
