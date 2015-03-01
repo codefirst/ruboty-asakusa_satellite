@@ -1,5 +1,6 @@
 require 'httparty'
 require 'socket.io-client-simple'
+HTTParty::Basement.default_options.update(verify: false)
 
 module Ruboty
   module Adapters
