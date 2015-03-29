@@ -46,10 +46,13 @@ module Ruboty
       private
 
       def client
-        info = HTTParty.get("#{url}/api/v1/service/info.json")
-        url = info["message_pusher"]["param"]["url"]
-        key = info["message_pusher"]["param"]["key"]
-        @client ||= SocketIO::Client::Simple::Client.new(url, app: key)
+        unless @client
+          info = HTTParty.get("#{url}/api/v1/service/info.json")
+          url = info["message_pusher"]["param"]["url"]
+          key = info["message_pusher"]["param"]["key"]
+          @client = SocketIO::Client::Simple::Client.new(url, app: key)
+        end
+        @client
       end
 
       def room
