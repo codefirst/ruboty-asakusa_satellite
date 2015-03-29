@@ -73,7 +73,12 @@ module Ruboty
         this = self
 
         client.on :connect do
+          puts "connect"
           self.emit :subscribe, "as-#{room_id}"
+        end
+
+        client.on :disconnect do
+          puts "disconnect"
         end
 
         client.on :message_create do |channel, json|
